@@ -8,22 +8,24 @@ class Database:
     def connection(self):
         return sqlite3.connect(self.path_to_db)
 
-    def execute(self, sql: str, parameters: tuple = None, fetchone=False, fetchall=False, commit=False):
-        if not parameters:
-            parameters = ()
+    def execute(self, sql: str, parameters: tuple = (), fetchone=False, fetchall=False, commit=False):
         connection = self.connection
-        connection.set_trace_callback(logger)
+        # connection.set_trace_callback(logger)  # Comment or remove if your SQLite version does not support this
         cursor = connection.cursor()
         data = None
-        cursor.execute(sql, parameters)
+        try:
+            cursor.execute(sql, parameters)
 
-        if commit:
-            connection.commit()
-        if fetchall:
-            data = cursor.fetchall()
-        if fetchone:
-            data = cursor.fetchone()
-        connection.close()
+            if commit:
+                connection.commit()
+            if fetchall:
+                data = cursor.fetchall()
+            if fetchone:
+                data = cursor.fetchone()
+        except sqlite3.DatabaseError as e:
+            print(f"Error executing SQL: {e}")
+        finally:
+            connection.close()
         return data
 
     def create_table_users(self):
@@ -45,7 +47,6 @@ class Database:
         ])
         return sql, tuple(parameters.values())
 
-    # Foydalanuvchi qo'shish yoki yangilash
     def add_user(self, telegram_id: int, full_name: str, name: str = "name", surname: str = "surname", phone: str = "998999999999"):
         sql = """
         INSERT INTO Users(telegram_id, full_name, name, surname, phone) 
@@ -59,15 +60,12 @@ class Database:
         self.execute(sql, parameters=(telegram_id, full_name, name, surname, phone), commit=True)
 
     def select_all_users(self):
-        sql = """
-        SELECT * FROM Users;
-        """
+        sql = "SELECT * FROM Users;"
         return self.execute(sql, fetchall=True)
 
     def select_user(self, **kwargs):
         sql = "SELECT * FROM Users WHERE "
         sql, parameters = self.format_args(sql, kwargs)
-
         return self.execute(sql, parameters=parameters, fetchone=True)
     
     def update_user_name(self, telegram_id: int, name: str):
@@ -82,7 +80,6 @@ class Database:
         sql = "UPDATE Users SET phone = ? WHERE telegram_id = ?"
         self.execute(sql, parameters=(phone, telegram_id), commit=True)
 
-    # Foydalanuvchi telegram_id orqali ma'lumotlarini olish
     def select_user_by_id(self, telegram_id: int):
         sql = "SELECT * FROM Users WHERE telegram_id = ?"
         return self.execute(sql, parameters=(telegram_id,), fetchone=True)

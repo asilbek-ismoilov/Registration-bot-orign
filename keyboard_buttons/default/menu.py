@@ -2,7 +2,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 tel = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text='Telefon yubotish ☎️', request_contact=True)]
+        [KeyboardButton(text='Telefon raqam yuborish ☎️', request_contact=True)]
     ],
     resize_keyboard=True
 )
@@ -10,11 +10,10 @@ tel = ReplyKeyboardMarkup(
 menu_button = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="Biz haqimizda 👥"),KeyboardButton(text="Manzilimiz 📍")],
-        [KeyboardButton(text="Kurslar 📚")]
+        [KeyboardButton(text="Kurslar 📚"), KeyboardButton(text="Savol❓ va Takliflar 📝")]
     ],
     resize_keyboard=True,
 )
-
 
 back_about = ReplyKeyboardMarkup(
     keyboard=[
@@ -22,7 +21,6 @@ back_about = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True,
 )
-
 
 cours = ReplyKeyboardMarkup(
     keyboard=[

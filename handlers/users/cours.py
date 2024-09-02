@@ -7,7 +7,6 @@ from aiogram.types import Message
 from keyboard_buttons.default.menu import tel, menu_button
 from aiogram.types import CallbackQuery
 from keyboard_buttons.inline import inline_val
-from keyboard_buttons.default.menu import cours
 from keyboard_buttons.inline.inline_val import reg_courses
 
 
@@ -81,10 +80,23 @@ Agar kursga ro'yxatdan o'tmoqchi bo'lsangiz pastdagi tugmani bosing 👇👇👇
 
     
 @dp.callback_query(F.data == "reg_cours")
-async def reg_cours(callback:CallbackQuery,state:FSMContext):
+async def reg_cours(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
-    await callback.message.answer("<b>Ismingizni kiriting</b> ✍", parse_mode='html', reply_markup=None)
-    await state.set_state(SingUp.name)
+    telegram_id = callback.from_user.id
+    user = db.select_user(telegram_id=telegram_id)
+
+    data = await state.get_data()
+    cours = data.get("cours")
+
+    # Foydalanuvchini tekshirish
+    if user:
+        # Foydalanuvchi topilgan bo'lsa, telefon raqamni tekshirish
+        if user[4] == "998999999999":
+            await callback.message.answer("<b>Ismingizni kiriting</b> ✍", parse_mode='html', reply_markup=None)
+            await state.set_state(SingUp.name)
+        else:
+            f_text = f"<blockquote>Ma'lumotlaringiz to'g'rimi tekshiring ❗️❗️❗️</blockquote>\nKurs: {cours} \n<b>Ism-Familiya</b>: {user[2]} {user[3]} \n<b>Tel</b>: {user[4]}"
+            await callback.message.answer(f_text, reply_markup=inline_val.confirmation, parse_mode='html')
 
 # name
 @dp.message(F.text, SingUp.name)
@@ -115,7 +127,7 @@ async def surname(message:Message, state:FSMContext):
         await state.set_state(SingUp.tel)
     else:
         await message.delete()
-        await message.answer("<b>Familiyani to'g'ri kiriting ❗️</b>", parse_mode='html')
+        await message.answer("<b>Familiyani to'g'ri kiriting ❗️</b>",  parse_mode='html')
 
 
 @dp.message(SingUp.surname)
@@ -123,33 +135,28 @@ async def surname_del(message:Message, state:FSMContext):
     await message.delete()
     await message.answer(text= "<b>Familiyani to'g'ri kiriting ❗️</b>", parse_mode='html')
 
-
-@dp.message(F.contact | F.text, SingUp.tel)
+@dp.message(F.contact | F.text.regexp(r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$"), SingUp.tel)
 async def phone_number(message: Message, state: FSMContext):
-    phone = message.text
-    
+    # Agar kontakt yuborilgan bo'lsa
+    if message.contact:
+        phone = message.contact.phone_number
+    else:
+        phone = message.text
+
     data = await state.get_data()
 
     name = data.get("name")
     surname = data.get("surname")
     cours = data.get("cours")
-    
-    if phone is None:
-        phone = message.contact.phone_number
-    
-    if not phone.startswith("998"):
-            phone = "+998" + phone
 
-    # elif not phone.startswith("+998"):
-    #     phone = "+998" + phone
-
-    if re.fullmatch(r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", phone):
+    # Telefon raqami to'g'ri kiritilganligini tekshirish
+    if phone:
         await state.update_data(phone=phone)
         f_text = f"<blockquote>Ma'lumotlaringiz to'g'rimi tekshiring ❗️❗️❗️</blockquote>\nKurs: {cours} \n<b>Ism-Familiya</b>: {name} {surname} \n<b>Tel</b>: {phone}"
         await message.answer(f_text, reply_markup=inline_val.confirmation, parse_mode='html')
     else:
         await message.delete()
-        await message.answer(text= "Telefon raqamni to'g'ri kiriting ❗️ \n998 ham kiriting ❗️", parse_mode='html')
+        await message.answer(text="Telefon raqamni to'g'ri kiriting ❗️ \n998 ham kiriting ❗️", parse_mode='html')
 
 
 
@@ -170,7 +177,8 @@ async def cancel(callback:CallbackQuery,state:FSMContext):
 async def edit(callback:CallbackQuery,state:FSMContext):
     await state.clear()
     await callback.message.delete()
-    await callback.message.answer("Qayta ro'yxatdan o'tish\n<b>Ismingizni kiriting</b> ✍", parse_mode='html', reply_markup=menu_button)
+    await callback.message.answer("Qayta ro'yxatdan o'tish\n<b>Ismingizni kiriting</b> ✍", parse_mode='html', reply_markup=None)
+    await state.set_state(SingUp.name)
 
 
 @dp.callback_query(F.data == "right")
