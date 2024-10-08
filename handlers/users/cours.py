@@ -186,18 +186,25 @@ async def right(callback:CallbackQuery, state:FSMContext):
     await callback.message.answer("Siz muvaffaqiyatli ro'yxatdan o'tingiz 🎉, tez orada admin siz bilan bog'lanadi ✅\n<b>Menu</b>", reply_markup=menu_button , parse_mode='html')
     await callback.message.delete()
 
+    telegram_id = callback.from_user.id
+    user = db.select_user(telegram_id=telegram_id)
+
     data = await state.get_data()
     cours = data.get("cours")
-    name = data.get("name")
-    surname = data.get("surname")
-    phone = data.get("phone")
 
+    if user:
+        if user[4] == "998999999999":
+            name = data.get("name")
+            surname = data.get("surname")
+            phone = data.get("phone")
 
-    text = f"Yangi o'quvchi 👤\n<blockquote>Kurs: {cours} \n<b>Ism-Familiya</b>: {name} {surname} \n<b>Tel</b>: {phone}</blockquote>"
-    await bot.send_message(ADMINS[0], text, parse_mode='html')
+            text = f"Yangi o'quvchi 👤\n<blockquote>Kurs: {cours} \n<b>Ism-Familiya</b>: {name} {surname} \n<b>Tel</b>: {phone}</blockquote>"
+            await bot.send_message(ADMINS[0], text, parse_mode='html')
 
-    # Foydalanuvchi ma'lumotlarini bazaga qo'shish
-    full_name = f"{name} {surname}"
-    db.add_user(telegram_id=callback.from_user.id, full_name=full_name, name=name, surname=surname, phone=phone)
+            full_name = f"{name} {surname}"
+            db.add_user(telegram_id=callback.from_user.id, full_name=full_name, name=name, surname=surname, phone=phone)
+        else:
+            text = f"Yangi o'quvchi 👤\n<blockquote>Kurs: {cours} \n<b>Ism-Familiya</b>: {user[2]} {user[3]} \n<b>Tel</b>: {user[4]}</blockquote>"
+            await bot.send_message(ADMINS[0], text, parse_mode='html')
 
     await state.clear()
