@@ -14,14 +14,13 @@ async def start_command(message: Message):
     if user is None:
         try:
             db.add_user(full_name=full_name, telegram_id=telegram_id)
-            await message.answer(text=f"""Assalomu alaykum ! {full_name} Sizni <b>Sifatedu</b> botida ko'rishdan xursandmiz! 🎉\n\n
-Quyidagi tugmalar yordamida bizning xizmatlarimizni kashf eting:\n\n
+            await message.answer(text=f"""Assalomu alaykum ! {full_name} Sizni <b>Sifatedu</b> botida ko'rishdan xursandmiz! 🎉\n
+Quyidagi tugmalar yordamida bizning xizmatlarimizni kashf eting:\n
 1. <b>Biz haqimizda</b> 🗣️ - Bizning kompaniya va xizmatlarimiz haqidagi ma'lumot.\n
-2. <b>Manzilimiz</b> 📌 - Bizning ofis manzilimiz va xaritasi.\n
-3. <b>Kurslar</b> 📚 - Taklif etilayotgan kurslarimiz haqida to'liq ma'lumot.\n
-5. <b>Ro'yxatdan o'tish</b> 📝 - Kurslamizga ro'yxatdan o'tishingiz mumkin.\n
-4. <b>Adminga murojat</b> - Savolingizni yuboring, adminimiz siz bilan bog'lanadi.\n
-Agar yordamga muhtoj bo'lsangiz, biz bilan bog'laning yoki /xabar berish tugmasini bosing. ❗️""", 
+2. <b>Manzilimiz</b> 📍 - Bizning ofis manzilimiz va xaritasi.\n
+3. <b>Kurslar</b> 📚 - Taklif etilayotgan kurslarimiz haqida to'liq ma'lumot va ro'yxatdan o'tish\n
+4. <b>Savol❓ va Takliflar 📝</b> - Savolingizni yuboring, adminimiz siz bilan bog'lanadi.\n
+""", 
             parse_mode='html', reply_markup=menu_button)
 
         except Exception as e:

@@ -17,8 +17,8 @@ async def cours_info(message: Message):
 
 @dp.message(F.text == "Manzilimiz 📍")
 async def location(message: Message): 
-    text = """📌 <b>Bizning manzilimiz: </b>Sifat IT Akademiyasi\n
-Navoiy sh. G'alabashox ko'chasi 77 | 7 uy, 
+    text = """📌 <b>Bizning manzilimiz: </b>Sifat education\n
+Aloqa ko'chasi, Navoiy, Karmana, Navoiy Region, Uzbekistan, 
 Bizning ofisimiz quyidagi xaritada ko'rsatilgan joyda joylashgan."""
 
     await message.answer_location(latitude=40.102545165025, longitude=65.3734143754646)
@@ -36,18 +36,20 @@ Sifatedu – bu dasturlash va IT sohasida ta'lim beruvchi yetakchi o'quv markazi
 - Django va boshqa web dasturlash framework-lari
 - Ma'lumotlar tahlili va Data Science
 - IT sohasida malaka oshirish kurslari
+- Xalqaro sertifikat
 
 👨‍🏫 <b>Mentorlarimiz:</b>
-- Muhammad Aliyev – 5 yillik tajriba
-- Madiyorbek – 4 yillik tajriba
+- Muslimbek Baratov – 5 yillik tajriba
+- Madiyorbek Odilov – 4 yillik tajriba
 - Asilbek Ismoilov – 2 yillik tajriba
-- Boboraxim – 2 yillik tajriba
+- Boboraxim Rustamqulov – 2 yillik tajriba
+- Fotima – 1 yillik tajriba
 
 🔗 <b>Biz bilan bog'lanish:</b>
 📞 Telefon: +998 88 378 08 08
 📞 Telefon: +998 99 750 17 17
 
-Sizni o'zimizning o'quv dasturlarimiz bilan tanishtirishni va professional rivojlanishingizda yordam berishni intiqlik bilan kutamiz!
+Sizni o'zimizning o'quv dasturlarimiz bilan tanishtirishni va professional rivojlanishingizda yordam berishni intiqlik bilan <b>kutamiz !</b>
 """
     await message.answer(text,parse_mode='html')
 
@@ -96,6 +98,10 @@ async def handle_admin_message(message: types.Message, state: FSMContext):
                     admin_id,
                     video_note.file_id,
                     reply_markup=inline_keyboard
+                )
+            elif message.text == '/start':
+                await message.answer(f"Bosh menu",
+                    reply_markup=menu_button 
                 )
             elif message.text:
                 await bot.send_message(

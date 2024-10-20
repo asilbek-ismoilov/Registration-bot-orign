@@ -19,7 +19,6 @@ async def show_python_course_details(message: Message,state:FSMContext):
     await state.update_data(cours = "Python")
     python_course_info = """
 📚 *Python Dasturlash Kursi*
-📅 Boshlanish vaqti: 2024-09-01
 ⏳ Davomiyligi: 8 oy
 💰 Narxi: 400,000 UZS oyiga
 
@@ -31,8 +30,11 @@ async def show_python_course_details(message: Message,state:FSMContext):
 - Botlar yaratish va boshqa qiziqarli loyihalar
 
 👨‍🏫 *Mentorlar:*
-- Muhammad Aliyev (5 yillik tajriba)
-- Nargiza Sodiqova (Python Data Science mutaxassisi)
+- Muslimbek Baratov – 5 yillik tajriba
+- Madiyorbek Odilov – 4 yillik tajriba
+- Asilbek Ismoilov – 2 yillik tajriba
+- Boboraxim Rustamqulov – 2 yillik tajriba
+- Fotima – 1 yillik tajriba
 
 📌 Batafsil ma'lumot uchun admin bilan bog'laning.
 
@@ -52,20 +54,18 @@ async def show_python_course_details(message: Message,state:FSMContext):
     await state.update_data(cours = "SMM")
     python_course_info = """
 📚 *SMM Dasturlash Kursi*
-📅 Boshlanish vaqti: 2024-09-01
 ⏳ Davomiyligi: 3 oy
-💰 Narxi: 1,200,000 UZS
+💰 Narxi: 400,000 UZS
 
 🔍 *Nimalarni o'rganasiz?*
-- Python asoslari
-- Ma'lumotlar tuzilmalari
-- OOP (Object-Oriented Programming)
-- Django framework yordamida web dasturlar yaratish
-- Botlar yaratish va boshqa qiziqarli loyihalar
+- Ijtimoiy tarmoqlar strategiyasi 
+- Kontent yaratish 
+- Targeting (Maqsadli reklama)
+- Statistikani tahlil qilish
+- Maqsadli auditoriyani aniqlash
 
 👨‍🏫 *Mentorlar:*
-- Muhammad Aliyev (5 yillik tajriba)
-- Nargiza Sodiqova (Python Data Science mutaxassisi)
+- Mohinur Muhammadova (1 yillik tajriba)
 
 📌 Batafsil ma'lumot uchun admin bilan bog'laning.
 
