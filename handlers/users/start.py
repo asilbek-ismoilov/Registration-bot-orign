@@ -2,9 +2,10 @@ from aiogram.types import Message
 from loader import dp, db
 from aiogram.filters import CommandStart
 from keyboard_buttons.default.menu import menu_button
+from aiogram.fsm.context import FSMContext
 
 @dp.message(CommandStart())
-async def start_command(message: Message):
+async def start_command(message: Message,state:FSMContext):
     full_name = message.from_user.full_name
     telegram_id = message.from_user.id
     
@@ -22,9 +23,11 @@ Quyidagi tugmalar yordamida bizning xizmatlarimizni kashf eting:\n
 4. <b>Savol❓ va Takliflar 📝</b> - Savolingizni yuboring, adminimiz siz bilan bog'lanadi.\n
 """, 
             parse_mode='html', reply_markup=menu_button)
+            await state.clear()
 
         except Exception as e:
             await message.answer(text=f"Xatolik yuz berdi: {str(e)}")
     else:
         await message.answer(text=f"Salom! {full_name}", reply_markup=menu_button)
+        await state.clear()
 

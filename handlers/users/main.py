@@ -3,30 +3,31 @@ from aiogram import F
 from keyboard_buttons.default.menu import menu_button, cours
 from aiogram.types import Message,CallbackQuery, ContentType
 from aiogram.fsm.context import FSMContext
-from keyboard_buttons.default.menu import back_about
+from keyboard_buttons.default.menu import menu_button
 from states.help_stt import AdminStates, AdminStates, create_inline_keyboard
 from aiogram import types
 import logging
 from aiogram.fsm.context import FSMContext
 
-
 @dp.message(F.text == "Kurslar 📚")
-async def cours_info(message: Message): 
+async def cours_info(message: Message, state: FSMContext): 
     await message.answer("Menu dan birini tanlang", reply_markup=cours)
+    await state.clear()
 
 
 @dp.message(F.text == "Manzilimiz 📍")
-async def location(message: Message): 
+async def location(message: Message, state: FSMContext): 
     text = """📌 <b>Bizning manzilimiz: </b>Sifat education\n
 Aloqa ko'chasi, Navoiy, Karmana, Navoiy Region, Uzbekistan, 
 Bizning ofisimiz quyidagi xaritada ko'rsatilgan joyda joylashgan."""
 
     await message.answer_location(latitude=40.102545165025, longitude=65.3734143754646)
     await message.answer(text, parse_mode='html')
+    await state.clear()
 
 
 @dp.message(F.text == "Biz haqimizda 👥")
-async def exit(message: Message):
+async def exit(message: Message, state: FSMContext):
     text = """🏢 <b>Biz haqimizda</b>
 
 Sifatedu – bu dasturlash va IT sohasida ta'lim beruvchi yetakchi o'quv markazi. Bizning maqsadimiz – sizga eng so'nggi texnologiyalar va dasturlash tillari bo'yicha chuqur bilim va ko'nikmalar berishdir.
@@ -52,6 +53,7 @@ Sifatedu – bu dasturlash va IT sohasida ta'lim beruvchi yetakchi o'quv markazi
 Sizni o'zimizning o'quv dasturlarimiz bilan tanishtirishni va professional rivojlanishingizda yordam berishni intiqlik bilan <b>kutamiz !</b>
 """
     await message.answer(text,parse_mode='html')
+    await state.clear()
 
 
 @dp.message(F.text == "🔙Orqaga")
@@ -60,7 +62,7 @@ async def exit(message: Message):
 
 @dp.message(F.text == "Savol❓ va Takliflar 📝")
 async def admin_message(message: Message, state: FSMContext):
-    await message.answer("Admin uchun xabar yuboring:",reply_markup=back_about)
+    await message.answer("Admin uchun xabar yuboring:",reply_markup=menu_button)
     await state.set_state(AdminStates.waiting_for_admin_message)
 
 @dp.message(AdminStates.waiting_for_admin_message, F.content_type.in_([
@@ -98,10 +100,6 @@ async def handle_admin_message(message: types.Message, state: FSMContext):
                     admin_id,
                     video_note.file_id,
                     reply_markup=inline_keyboard
-                )
-            elif message.text == '/start':
-                await message.answer(f"Bosh menu",
-                    reply_markup=menu_button 
                 )
             elif message.text:
                 await bot.send_message(
@@ -177,7 +175,7 @@ async def handle_admin_message(message: types.Message, state: FSMContext):
             logging.error(f"Error sending message to admin {admin_id}: {e}")
 
     await state.clear()
-    await bot.send_message(user_id, "Admin sizga javob berishi mumkin.", reply_markup=back_about)
+    await bot.send_message(user_id, "Admin sizga javob berishi mumkin.",reply_markup=menu_button)
 
 # Callback query handler for the reply button
 @dp.callback_query(lambda c: c.data.startswith('reply:'))
@@ -197,22 +195,22 @@ async def handle_admin_reply(message: Message, state: FSMContext):
     if original_user_id:
         try:
             if message.text:
-                await bot.send_message(original_user_id, f"Admin javobi:\n{message.text}", reply_markup=back_about)
+                await bot.send_message(original_user_id, f"Admin javobi:\n{message.text}", reply_markup=menu_button)
             
             elif message.voice:
-                await bot.send_voice(original_user_id, message.voice.file_id, reply_markup=back_about)
+                await bot.send_voice(original_user_id, message.voice.file_id, reply_markup=menu_button)
 
             elif message.video_note:
-                await bot.send_video_note(original_user_id, message.video_note.file_id, reply_markup=back_about)
+                await bot.send_video_note(original_user_id, message.video_note.file_id, reply_markup=menu_button)
 
             elif message.audio:
-                await bot.send_audio(original_user_id, message.audio.file_id, reply_markup=back_about)
+                await bot.send_audio(original_user_id, message.audio.file_id, reply_markup=menu_button)
             
             elif message.sticker:
-                await bot.send_sticker(original_user_id, message.sticker.file_id, reply_markup=back_about)
+                await bot.send_sticker(original_user_id, message.sticker.file_id, reply_markup=menu_button)
             
             elif message.video:
-                await bot.send_video(original_user_id, message.video.file_id, reply_markup=back_about)
+                await bot.send_video(original_user_id, message.video.file_id, reply_markup=menu_button)
 
             await state.clear()  # Clear state after sending the reply
         except Exception as e:

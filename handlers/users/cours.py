@@ -135,7 +135,7 @@ async def surname_del(message:Message, state:FSMContext):
     await message.delete()
     await message.answer(text= "<b>Familiyani to'g'ri kiriting ❗️</b>", parse_mode='html')
 
-@dp.message(F.contact | F.text.regexp(r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$"), SingUp.tel)
+@dp.message(F.contact | F.text, SingUp.tel)
 async def phone_number(message: Message, state: FSMContext):
     # Agar kontakt yuborilgan bo'lsa
     if message.contact:
@@ -150,7 +150,8 @@ async def phone_number(message: Message, state: FSMContext):
     cours = data.get("cours")
 
     # Telefon raqami to'g'ri kiritilganligini tekshirish
-    if phone:
+    uzbek_phone_pattern = r"^(\+998|998)[0-9]{9}$"
+    if re.match(uzbek_phone_pattern, phone):
         await state.update_data(phone=phone)
         f_text = f"<blockquote>Ma'lumotlaringiz to'g'rimi tekshiring ❗️❗️❗️</blockquote>\nKurs: {cours} \n<b>Ism-Familiya</b>: {name} {surname} \n<b>Tel</b>: {phone}"
         await message.answer(f_text, reply_markup=inline_val.confirmation, parse_mode='html')
